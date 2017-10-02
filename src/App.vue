@@ -14,17 +14,16 @@ export default {
     data(){
         return{
             titulo: 'Alurapic',
-            fotos: [
-                {
-                    url: 'https://abrilvejasp.files.wordpress.com/2016/12/02179.jpg?quality=70&strip=info',
-                    titulo: 'cachorro'
-                },
-                {
-                    url: 'https://abrilvejasp.files.wordpress.com/2016/12/02179.jpg?quality=70&strip=info',
-                    titulo: 'cachorro2'
-                }
-            ]
+            fotos: []
         }
+    },
+
+    created(){
+        //promise
+        this.$http.get('http://localhost:3000/v1/fotos')
+            .then(res => res.json()) // res.json() tambem é um promise
+            .then(fotos => this.fotos = fotos, err => console.log(err)); // fotos é o resultado da promise do res.json()
+        
     }
 }
 </script>
