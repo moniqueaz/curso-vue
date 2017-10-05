@@ -4,6 +4,7 @@ import App from './App.vue'
 import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import { routes } from './routes';
+import './directives/Tranforms';
 
 // Register
 Vue.use(VueResource);
