@@ -1,20 +1,22 @@
 <template>
     <div>
         <h1 class="centralizado" v-text="titulo"></h1>
-
+        <p class="centralizado" v-show="mensagem">{{ mensagem }}</p>
         <input type="search" class="filtro" @input="filtro = $event.target.value" placeholder="filtro por parte do titulo">
         <ul class="lista-fotos">
-            <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto.url">
-               <meu-painel :titulo="foto.titulo">
-                    <imagem-responsiva v-meu-transform:scale.animate="1.2" :url="foto.url" :titulo="foto.titulo"/>
-                    <meu-botao 
-                        tipo="button" 
-                        rotulo="REMOVER" 
-                        @botaoAtivado="remove(foto)" 
-                        :confirmacao="false"
-                        estilo="perigo"/>
-               </meu-painel>
-            </li>
+            <transition-group name="lista-fade">
+                <li class="lista-fotos-item" v-for="foto of fotosComFiltro" :key="foto.url">
+                    <meu-painel :titulo="foto.titulo">
+                            <imagem-responsiva v-meu-transform:scale.animate="1.2" :url="foto.url" :titulo="foto.titulo"/>
+                            <meu-botao 
+                                tipo="button" 
+                                rotulo="REMOVER" 
+                                @botaoAtivado="remove(foto)" 
+                                :confirmacao="false"
+                                estilo="perigo"/>
+                    </meu-painel>
+                </li>
+            </transition-group>
         </ul>
     </div>
 </template>
@@ -23,6 +25,7 @@
 import Painel from '../shared/painel/Painel.vue';
 import ImagemResponsiva from '../shared/imagem-responsiva/ImagemResponsiva.vue';
 import Botao from '../shared/botao/Botao.vue';
+import FotoService from '../../domain/foto/FotoService';
 
 export default {
 
@@ -35,7 +38,8 @@ export default {
         return{
             titulo: 'Alurapic',
             fotos: [],
-            filtro : ''
+            filtro : '',
+            mensagem: ''
         }
     },
 
@@ -52,15 +56,67 @@ export default {
 
     methods: {
         remove(foto){
-            alert('Remover a foto!' + foto.titulo);
+
+            this.service
+                .apaga(foto._id)
+                .then(() => {
+                    let indice = this.fotos.indexOf(foto);
+                    this.fotos.splice(indice, 1);
+                    this.mensagem = 'Foto removida com sucesso';
+                }, err => {
+                    console.log(err);
+                    this.mensagem = 'Não foi possivel remover a foto';
+                })
+
+            /*
+            this.resource
+            .delete({ id: foto._id})
+            .then(() => {
+                let indice = this.fotos.indexOf(foto);
+                this.fotos.splice(indice, 1);
+                this.mensagem = 'Foto removida com sucesso';
+            }, err => {
+                console.log(err);
+                this.mensagem = 'Não foi possivel remover a foto';
+            })
+            */
+            /*
+            this.$http
+            .delete(`v1/fotos/${foto._id}`)
+            .then(() => {
+                let indice = this.fotos.indexOf(foto);
+                this.fotos.splice(indice, 1);
+                this.mensagem = 'Foto removida com sucesso';
+            }, err => {
+                console.log(err);
+                this.mensagem = 'Não foi possivel remover a foto';
+            })
+            */
         }
     },
 
     created(){
-        //promise
-        this.$http.get('http://localhost:3000/v1/fotos')
+
+        this.service = new FotoService(this.$resource);
+
+        this.service
+            .lista()
+            .then(fotos => this.fotos = fotos, err => console.log(err));
+
+        // criando
+        //this.resource = this.$resource('v1/fotos{/id}');
+        /*
+        this.resource
+            .query()
             .then(res => res.json()) // res.json() tambem é um promise
             .then(fotos => this.fotos = fotos, err => console.log(err)); // fotos é o resultado da promise do res.json()
+        */
+        //promise
+        /*
+        this.$http.get('v1/fotos')
+            .then(res => res.json()) // res.json() tambem é um promise
+            .then(fotos => this.fotos = fotos, err => console.log(err)); // fotos é o resultado da promise do res.json()
+        */
         
     }
 }
@@ -87,4 +143,12 @@ export default {
     display: block;
     width: 100%;
   }
+
+.lista-fade-enter, .lista-fade-leave-active {
+  opacity: 0
+}
+
+.lista-fade-enter-active, .lista-fade-leave-active {
+  transition: opacity .4s
+}
 </style>
