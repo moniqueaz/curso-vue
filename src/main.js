@@ -5,6 +5,8 @@ import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import { routes } from './routes';
 import './directives/Tranforms';
+import VeeValidate from 'vee-validate';
+import msg from './pt_BR';
 
 // Register
 Vue.use(VueResource);
@@ -16,6 +18,11 @@ const router = new VueRouter({
   routes,
   mode: 'history'
  }); // obj javascript
+
+
+ Vue.use(VeeValidate, {
+  locale: 'pt_BR'
+ });
 
 new Vue({
   el: '#app',
