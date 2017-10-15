@@ -5,7 +5,7 @@ import VueResource from 'vue-resource';
 import VueRouter from 'vue-router';
 import { routes } from './routes';
 import './directives/Tranforms';
-import VeeValidate from 'vee-validate';
+import VeeValidate, { Validator } from 'vee-validate';
 import msg from './pt_BR';
 
 // Register
@@ -19,7 +19,7 @@ const router = new VueRouter({
   mode: 'history'
  }); // obj javascript
 
-
+ Validator.addLocale(msg);
  Vue.use(VeeValidate, {
   locale: 'pt_BR'
  });
