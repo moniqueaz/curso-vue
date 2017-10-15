@@ -1,5 +1,6 @@
 <template>
     <div>
+        <img src="/static/download.jpg" alt="">
         <h1 class="centralizado" v-text="titulo"></h1>
         <p class="centralizado" v-show="mensagem">{{ mensagem }}</p>
         <input type="search" class="filtro" @input="filtro = $event.target.value" placeholder="filtro por parte do titulo">
